@@ -1,1 +1,157 @@
-local UIS,VIM,LP,RS=game:GetService("UserInputService"),game:GetService("VirtualInputManager"),game:GetService("Players").LocalPlayer,game:GetService("RunService");local SG,C3=Instance.new("ScreenGui",game:GetService("CoreGui")),Color3.fromRGB;local Conf={F=false,M="",T="Cid's Sword",S={Z=true,X=true,C=true,V=true,F=true},D=10,AS=false,Hold=false,W=false};local S_Pos,W_Pos=Vector3.new(1793,-49,-859),Vector3.new(1959,-45,-88);LP.Idled:Connect(function()game:GetService("VirtualUser"):CaptureController();game:GetService("VirtualUser"):ClickButton2(Vector2.new())end);local function Create(cl,p,pr)local i=Instance.new(cl,pr);for k,v in pairs(p)do i[k]=v end;return i end;local function Round(i,r)Create("UICorner",{CornerRadius=UDim.new(0,r),Parent=i})end;local M=Create("Frame",{Size=UDim2.new(0,280,0,580),Position=UDim2.new(0.5,-140,0.5,-280),BackgroundColor3=C3(10,10,15),Parent=SG,Active=true,Draggable=true});Round(M,12);local Head=Create("Frame",{Size=UDim2.new(1,0,0,45),BackgroundColor3=C3(20,20,30),Parent=M});Round(Head,12);Create("UIStroke",{Color=C3(0,255,255),Parent=M});local Title=Create("TextLabel",{Size=UDim2.new(0.6,0,1,0),Position=UDim2.new(0,15,0,0),Text="HUNSEN HUB V4.0",TextColor3=C3(0,255,255),Font=3,TextSize=16,BackgroundTransparency=1,Parent=Head});local FPS=Create("TextLabel",{Size=UDim2.new(0.4,-15,1,0),Position=UDim2.new(0.6,0,0,0),Text="FPS: 60",TextColor3=C3(255,255,0),Font=3,TextSize=14,BackgroundTransparency=1,Parent=Head});local fC,lU=0,tick();RS.RenderStepped:Connect(function()fC=fC+1;if tick()-lU>=1 then FPS.Text="FPS: "..fC;fC,lU=0,tick()end end);local Cont=Create("ScrollingFrame",{Size=UDim2.new(1,-20,1,-70),Position=UDim2.new(0,10,0,60),CanvasSize=UDim2.new(0,0,0,950),BackgroundTransparency=1,Parent=M});Create("UIListLayout",{Padding=UDim.new(0,10),HorizontalAlignment="Center",Parent=Cont});local ToolI=Create("TextBox",{Size=UDim2.new(1,-10,0,35),PlaceholderText="Weapon Name...",Text=Conf.T,BackgroundColor3=C3(25,25,35),TextColor3=C3(255,255,255),Parent=Cont});Round(ToolI,8);ToolI.FocusLost:Connect(function()Conf.T=ToolI.Text end);local SF=Create("Frame",{Size=UDim2.new(1,-10,0,45),BackgroundTransparency=1,Parent=Cont});Create("UIListLayout",{FillDirection="Horizontal",Padding=UDim.new(0,5),HorizontalAlignment="Center",Parent=SF});for _,k in pairs({"Z","X","C","V","F"})do local b=Create("TextButton",{Size=UDim2.new(0,42,0,42),Text=k,BackgroundColor3=C3(0,150,255),TextColor3=C3(255,255,255),Parent=SF});Round(b,8);b.MouseButton1Click:Connect(function()Conf.S[k]=not Conf.S[k];b.BackgroundColor3=Conf.S[k] and C3(0,150,255) or C3(50,50,60)end)end;local function Equip()local ch=LP.Character;if not ch then return end;local t=ch:FindFirstChildOfClass("Tool") or LP.Backpack:FindFirstChild(Conf.T) or LP.Backpack:FindFirstChildOfClass("Tool");if t and t.Parent~=ch then ch.Humanoid:EquipTool(t) end return t end;local function HasOrb()for _,v in pairs(LP.Backpack:GetChildren())do if v.Name:lower():find("orb") or v.Name:lower():find("shadow") then return true end end;return LP.Character:FindFirstChild("Shadow Orb") or LP.Character:FindFirstChild("Orb") end;local function Summon(h)for _,g in pairs(LP.PlayerGui:GetChildren())do if g:IsA("ScreenGui")then for _,v in pairs(g:GetDescendants())do if(v:IsA("TextButton")or v:IsA("TextLabel"))and(v.Text:lower():find("summon") or v.Text:lower():find("เสก"))then local t=v:IsA("TextButton") and v or v.Parent;if t:IsA("TextButton") and t.Visible then local ap=t.AbsolutePosition;VIM:SendMouseButtonEvent(ap.X+(t.AbsoluteSize.X/2),ap.Y+(t.AbsoluteSize.Y/2)+58,0,h,game,1);Conf.Hold=h;return end end end end end end;local ScanB=Create("TextButton",{Size=UDim2.new(1,-10,0,35),Text="🔄 SCAN MONSTERS",BackgroundColor3=C3(30,30,45),TextColor3=C3(255,255,255),Parent=Cont});Round(ScanB,8);local MobS=Create("ScrollingFrame",{Size=UDim2.new(1,-10,0,100),BackgroundColor3=C3(15,15,20),CanvasSize=UDim2.new(0,0,5,0),Parent=Cont});Round(MobS,8);Create("UIListLayout",{Parent=MobS});ScanB.MouseButton1Click:Connect(function()for _,v in pairs(MobS:GetChildren())do if v:IsA("TextButton")then v:Destroy()end end;local Cache={};for _,v in pairs(workspace:GetDescendants())do if v:IsA("Model")and v:FindFirstChild("Humanoid")and v.Humanoid.Health>0 and not Cache[v.Name]and v~=LP.Character then Cache[v.Name]=true;local b=Create("TextButton",{Size=UDim2.new(1,0,0,25),Text=v.Name,BackgroundColor3=C3(35,35,45),TextColor3=C3(200,200,200),Parent=MobS});b.MouseButton1Click:Connect(function()Conf.M=v.Name;Title.Text="Target: "..v.Name end)end end end);task.spawn(function()while task.wait(0.1)do pcall(function()local ch=LP.Character;if not ch or not ch:FindFirstChild("HumanoidRootPart") then return end;local hrp,hum=ch.HumanoidRootPart,ch.Humanoid;if Conf.W then hrp.CFrame=CFrame.new(W_Pos)elseif Conf.AS then if HasOrb() then local boss=workspace:FindFirstChild("CidBoss",true) or workspace:FindFirstChild("Cid Boss",true);if boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health>0 then if Conf.Hold then Summon(false)end;Equip();hrp.CFrame=CFrame.lookAt(boss.HumanoidRootPart.Position+(boss.HumanoidRootPart.CFrame.LookVector*-Conf.D),boss.HumanoidRootPart.Position);if ch:FindFirstChildOfClass("Tool") then ch:FindFirstChildOfClass("Tool"):Activate() end;for k,v in pairs(Conf.S)do if v then VIM:SendKeyEvent(true,Enum.KeyCode[k],false,game)end end else hrp.CFrame=CFrame.new(S_Pos);if not Conf.Hold then Summon(true)end end else local u=workspace:FindFirstChild("Unlucky",true);if u and u:FindFirstChild("Humanoid") and u.Humanoid.Health>0 then hrp.CFrame=u.HumanoidRootPart.CFrame*CFrame.new(0,0,Conf.D);Equip();if ch:FindFirstChildOfClass("Tool") then ch:FindFirstChildOfClass("Tool"):Activate() end else hrp.CFrame=CFrame.new(S_Pos) end end elseif Conf.F and Conf.M~=""then for _,b in pairs(workspace:GetDescendants()) do if b.Name==Conf.M and b:FindFirstChild("Humanoid") and b.Humanoid.Health>0 then hrp.CFrame=b.HumanoidRootPart.CFrame*CFrame.new(0,0,Conf.D);Equip();if ch:FindFirstChildOfClass("Tool") then ch:FindFirstChildOfClass("Tool"):Activate() end break end end end end)end end);local WB=Create("TextButton",{Size=UDim2.new(1,-10,0,40),Text="🚌 วาปไปรอรถ: OFF",BackgroundColor3=C3(30,30,45),TextColor3=C3(255,255,255),Parent=Cont});Round(WB,8);WB.MouseButton1Click:Connect(function()Conf.W=not Conf.W;Conf.F,Conf.AS=false,false;WB.Text=Conf.W and "🚌 วาปไปรอรถ: ON" or "🚌 วาปไปรอรถ: OFF";WB.BackgroundColor3=Conf.W and C3(0,200,100) or C3(30,30,45)end);local FB=Create("TextButton",{Size=UDim2.new(1,-10,0,40),Text="START FARM (Normal)",BackgroundColor3=C3(0,120,200),TextColor3=C3(255,255,255),Parent=Cont});Round(FB,8);FB.MouseButton1Click:Connect(function()Conf.F=not Conf.F;Conf.AS,Conf.W=false,false;FB.Text=Conf.F and "STOP FARM" or "START FARM (Normal)"end);local CB=Create("TextButton",{Size=UDim2.new(1,-10,0,45),Text="AUTO UNLUCKY & BOSS",BackgroundColor3=C3(100,40,200),TextColor3=C3(255,255,255),Parent=Cont});Round(CB,10);CB.MouseButton1Click:Connect(function()Conf.AS=not Conf.AS;Conf.F,Conf.W=false,false;if not Conf.AS then Summon(false)end;CB.Text=Conf.AS and "STOP SYSTEM" or "AUTO UNLUCKY & BOSS" end);local BTN=Create("TextButton",{Size=UDim2.new(0,45,0,45),Text="H",BackgroundColor3=C3(15,15,20),TextColor3=C3(0,255,255),Parent=SG});Round(BTN,10);BTN.MouseButton1Click:Connect(function()M.Visible=not M.Visible end)
+local UIS,VIM,LP,RS=game:GetService("UserInputService"),game:GetService("VirtualInputManager"),game:GetService("Players").LocalPlayer,game:GetService("RunService");
+local SG,C3=Instance.new("ScreenGui",game:GetService("CoreGui")),Color3.fromRGB;
+local Conf={F=false,M="",T="Cid's Sword",D=10,AS=false,W=false}; 
+local S_Pos,W_Pos=Vector3.new(1793,-49,-859),Vector3.new(1959,-45,-88);
+
+LP.Idled:Connect(function()
+    game:GetService("VirtualUser"):CaptureController();
+    game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+end);
+
+local function Create(cl,p,pr)
+    local i=Instance.new(cl,pr);
+    for k,v in pairs(p)do i[k]=v end;
+    return i 
+end;
+
+local function Round(i,r)
+    Create("UICorner",{CornerRadius=UDim.new(0,r),Parent=i})
+end;
+
+local M=Create("Frame",{Size=UDim2.new(0,280,0,500),Position=UDim2.new(0.5,-140,0.5,-250),BackgroundColor3=C3(10,10,15),Parent=SG,Active=true,Draggable=true});
+Round(M,12);
+local Head=Create("Frame",{Size=UDim2.new(1,0,0,45),BackgroundColor3=C3(20,20,30),Parent=M});
+Round(Head,12);
+Create("UIStroke",{Color=C3(0,255,255),Parent=M});
+local Title=Create("TextLabel",{Size=UDim2.new(0.6,0,1,0),Position=UDim2.new(0,15,0,0),Text="HUNSEN HUB V4.7",TextColor3=C3(0,255,255),Font=3,TextSize=16,BackgroundTransparency=1,Parent=Head});
+local FPS=Create("TextLabel",{Size=UDim2.new(0.4,-15,1,0),Position=UDim2.new(0.6,0,0,0),Text="FPS: 60",TextColor3=C3(255,255,0),Font=3,TextSize=14,BackgroundTransparency=1,Parent=Head});
+
+local fC,lU=0,tick();
+RS.RenderStepped:Connect(function()
+    fC=fC+1;
+    if tick()-lU>=1 then FPS.Text="FPS: "..fC;fC,lU=0,tick()end 
+end);
+
+local Cont=Create("ScrollingFrame",{Size=UDim2.new(1,-20,1,-70),Position=UDim2.new(0,10,0,60),CanvasSize=UDim2.new(0,0,0,800),BackgroundTransparency=1,Parent=M});
+Create("UIListLayout",{Padding=UDim.new(0,10),HorizontalAlignment="Center",Parent=Cont});
+
+local ToolI=Create("TextBox",{Size=UDim2.new(1,-10,0,35),PlaceholderText="Weapon Name...",Text=Conf.T,BackgroundColor3=C3(25,25,35),TextColor3=C3(255,255,255),Parent=Cont});
+Round(ToolI,8);
+ToolI.FocusLost:Connect(function()Conf.T=ToolI.Text end);
+
+local function Equip()
+    local ch=LP.Character;
+    if not ch then return end;
+    local t=ch:FindFirstChildOfClass("Tool") or LP.Backpack:FindFirstChild(Conf.T) or LP.Backpack:FindFirstChildOfClass("Tool");
+    if t and t.Parent~=ch then ch.Humanoid:EquipTool(t) end 
+    return t 
+end;
+
+-- ฟังก์ชันดึงมอนมาไว้ข้างหน้าตัวเรา
+local function BringMob(target) 
+    if target and target:FindFirstChild("HumanoidRootPart") and LP.Character:FindFirstChild("HumanoidRootPart") then 
+        local mHRP = target.HumanoidRootPart
+        local pHRP = LP.Character.HumanoidRootPart
+        mHRP.Velocity = Vector3.new(0,0,0)
+        mHRP.RotVelocity = Vector3.new(0,0,0)
+        -- ดึงมอนมาจ่อหน้าเรา 10 หน่วย (เราอยู่หลังมอน มอนอยู่หน้าเรา)
+        mHRP.CFrame = pHRP.CFrame * CFrame.new(0, 0, -10) 
+    end 
+end;
+
+local function Summon()
+    for _,v in pairs(workspace:GetDescendants()) do 
+        if v:IsA("ProximityPrompt") then 
+            if v.ObjectText:lower():find("orb") or v.ActionText:lower():find("summon") or v.ActionText:lower():find("เสก") then 
+                fireproximityprompt(v, 10) 
+            end 
+        end 
+    end 
+end;
+
+local ScanB=Create("TextButton",{Size=UDim2.new(1,-10,0,35),Text="🔄 SCAN MONSTERS",BackgroundColor3=C3(30,30,45),TextColor3=C3(255,255,255),Parent=Cont});
+Round(ScanB,8);
+local MobS=Create("ScrollingFrame",{Size=UDim2.new(1,-10,0,100),BackgroundColor3=C3(15,15,20),CanvasSize=UDim2.new(0,0,5,0),Parent=Cont});
+Round(MobS,8);
+Create("UIListLayout",{Parent=MobS});
+
+ScanB.MouseButton1Click:Connect(function()
+    for _,v in pairs(MobS:GetChildren())do if v:IsA("TextButton")then v:Destroy()end end;
+    local Cache={};
+    for _,v in pairs(workspace:GetDescendants())do 
+        if v:IsA("Model")and v:FindFirstChild("Humanoid")and v.Humanoid.Health>0 and not Cache[v.Name]and v~=LP.Character then 
+            Cache[v.Name]=true;
+            local b=Create("TextButton",{Size=UDim2.new(1,0,0,25),Text=v.Name,BackgroundColor3=C3(35,35,45),TextColor3=C3(200,200,200),Parent=MobS});
+            b.MouseButton1Click:Connect(function()Conf.M=v.Name;Title.Text="Target: "..v.Name end)
+        end 
+    end 
+end);
+
+task.spawn(function()
+    while task.wait(0.1) do
+        pcall(function()
+            local ch=LP.Character;
+            if not ch or not ch:FindFirstChild("HumanoidRootPart") then return end;
+            local hrp,hum=ch.HumanoidRootPart,ch.Humanoid;
+
+            if Conf.W then 
+                hrp.CFrame=CFrame.new(W_Pos)
+            elseif Conf.AS then 
+                local boss=nil;
+                for _,v in pairs(workspace:GetDescendants()) do 
+                    if (v.Name:lower():find("cidboss") or v.Name:lower():find("cid boss")) and v:FindFirstChild("Humanoid") and v.Humanoid.Health>0 then 
+                        boss=v break 
+                    end 
+                end;
+                if boss then 
+                    Equip();
+                    -- เปลี่ยนจุดวาร์ปไปที่ "ด้านหลัง" ของบอสระยะ 10 หน่วย
+                    hrp.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 0, 10);
+                    hrp.CFrame = CFrame.lookAt(hrp.Position, boss.HumanoidRootPart.Position);
+                    BringMob(boss);
+                    if ch:FindFirstChildOfClass("Tool") then ch:FindFirstChildOfClass("Tool"):Activate() end 
+                else 
+                    hrp.CFrame=CFrame.new(S_Pos);
+                    Summon() 
+                end 
+            elseif Conf.F and Conf.M~="" then 
+                for _,v in pairs(workspace:GetDescendants()) do 
+                    if v.Name == Conf.M and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then 
+                        -- เปลี่ยนจุดวาร์ปไปที่ "ด้านหลัง" ของมอนสเตอร์ระยะ 10 หน่วย
+                        hrp.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 10);
+                        hrp.CFrame = CFrame.lookAt(hrp.Position, v.HumanoidRootPart.Position);
+                        Equip();
+                        BringMob(v);
+                        if ch:FindFirstChildOfClass("Tool") then ch:FindFirstChildOfClass("Tool"):Activate() end 
+                    end 
+                end 
+            end 
+        end)
+    end 
+end);
+
+local WB=Create("TextButton",{Size=UDim2.new(1,-10,0,40),Text="🚌 วาปไปรอรถ: OFF",BackgroundColor3=C3(30,30,45),TextColor3=C3(255,255,255),Parent=Cont});
+Round(WB,8);
+WB.MouseButton1Click:Connect(function()
+    Conf.W=not Conf.W; Conf.F,Conf.AS=false,false;
+    WB.Text=Conf.W and "🚌 วาปไปรอรถ: ON" or "🚌 วาปไปรอรถ: OFF";
+    WB.BackgroundColor3=Conf.W and C3(0,200,100) or C3(30,30,45)
+end);
+
+local FB=Create("TextButton",{Size=UDim2.new(1,-10,0,40),Text="START FARM (Normal)",BackgroundColor3=C3(0,120,200),TextColor3=C3(255,255,255),Parent=Cont});
+Round(FB,8);
+FB.MouseButton1Click:Connect(function()
+    Conf.F=not Conf.F; Conf.AS,Conf.W=false,false;
+    FB.Text=Conf.F and "STOP FARM" or "START FARM (Normal)"
+end);
+
+local CB=Create("TextButton",{Size=UDim2.new(1,-10,0,45),Text="AUTO CIDBOSS",BackgroundColor3=C3(100,40,200),TextColor3=C3(255,255,255),Parent=Cont});
+Round(CB,10);
+CB.MouseButton1Click:Connect(function()
+    Conf.AS=not Conf.AS; Conf.F,Conf.W=false,false;
+    CB.Text=Conf.AS and "STOP CIDBOSS" or "AUTO CIDBOSS" 
+end);
+
+local BTN=Create("TextButton",{Size=UDim2.new(0,45,0,45),Text="H",BackgroundColor3=C3(15,15,20),TextColor3=C3(0,255,255),Parent=SG});
+Round(BTN,10);
+BTN.MouseButton1Click:Connect(function()M.Visible=not M.Visible end)
