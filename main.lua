@@ -1,6 +1,6 @@
 local UIS,VIM,LP,RS=game:GetService("UserInputService"),game:GetService("VirtualInputManager"),game:GetService("Players").LocalPlayer,game:GetService("RunService");
 local SG,C3=Instance.new("ScreenGui",game:GetService("CoreGui")),Color3.fromRGB;
-local Conf={F=false,M="",T="Cid's Sword",D=10,AS=false,W=false}; 
+local Conf={F=false,M="",T="Cid's Sword",D=5,AS=false,W=false}; -- ระยะ D=5
 local S_Pos,W_Pos=Vector3.new(1793,-49,-859),Vector3.new(1959,-45,-88);
 
 LP.Idled:Connect(function()
@@ -23,7 +23,7 @@ Round(M,12);
 local Head=Create("Frame",{Size=UDim2.new(1,0,0,45),BackgroundColor3=C3(20,20,30),Parent=M});
 Round(Head,12);
 Create("UIStroke",{Color=C3(0,255,255),Parent=M});
-local Title=Create("TextLabel",{Size=UDim2.new(0.6,0,1,0),Position=UDim2.new(0,15,0,0),Text="HUNSEN HUB V4.7",TextColor3=C3(0,255,255),Font=3,TextSize=16,BackgroundTransparency=1,Parent=Head});
+local Title=Create("TextLabel",{Size=UDim2.new(0.6,0,1,0),Position=UDim2.new(0,15,0,0),Text="HUNSEN HUB V4.8 (5m)",TextColor3=C3(0,255,255),Font=3,TextSize=16,BackgroundTransparency=1,Parent=Head});
 local FPS=Create("TextLabel",{Size=UDim2.new(0.4,-15,1,0),Position=UDim2.new(0.6,0,0,0),Text="FPS: 60",TextColor3=C3(255,255,0),Font=3,TextSize=14,BackgroundTransparency=1,Parent=Head});
 
 local fC,lU=0,tick();
@@ -35,7 +35,7 @@ end);
 local Cont=Create("ScrollingFrame",{Size=UDim2.new(1,-20,1,-70),Position=UDim2.new(0,10,0,60),CanvasSize=UDim2.new(0,0,0,800),BackgroundTransparency=1,Parent=M});
 Create("UIListLayout",{Padding=UDim.new(0,10),HorizontalAlignment="Center",Parent=Cont});
 
-local ToolI=Create("TextBox",{Size=UDim2.new(1,-10,0,35),PlaceholderText="Weapon Name...",Text=Conf.T,BackgroundColor3=C3(25,25,35),TextColor3=C3(255,255,255),Parent=Cont});
+local ToolI=Create("TextBox",{Size=UDim2.new(1,-10,0,35),PlaceholderText="ชื่ออาวุธ...",Text=Conf.T,BackgroundColor3=C3(25,25,35),TextColor3=C3(255,255,255),Parent=Cont});
 Round(ToolI,8);
 ToolI.FocusLost:Connect(function()Conf.T=ToolI.Text end);
 
@@ -47,15 +47,14 @@ local function Equip()
     return t 
 end;
 
--- ฟังก์ชันดึงมอนมาไว้ข้างหน้าตัวเรา
+-- ดึงมอนจ่อหน้า ระยะ 5
 local function BringMob(target) 
     if target and target:FindFirstChild("HumanoidRootPart") and LP.Character:FindFirstChild("HumanoidRootPart") then 
         local mHRP = target.HumanoidRootPart
         local pHRP = LP.Character.HumanoidRootPart
         mHRP.Velocity = Vector3.new(0,0,0)
         mHRP.RotVelocity = Vector3.new(0,0,0)
-        -- ดึงมอนมาจ่อหน้าเรา 10 หน่วย (เราอยู่หลังมอน มอนอยู่หน้าเรา)
-        mHRP.CFrame = pHRP.CFrame * CFrame.new(0, 0, -10) 
+        mHRP.CFrame = pHRP.CFrame * CFrame.new(0, 0, -5) -- ดึงมอนมาจ่อหน้า 5 หน่วย
     end 
 end;
 
@@ -92,7 +91,7 @@ task.spawn(function()
         pcall(function()
             local ch=LP.Character;
             if not ch or not ch:FindFirstChild("HumanoidRootPart") then return end;
-            local hrp,hum=ch.HumanoidRootPart,ch.Humanoid;
+            local hrp = ch.HumanoidRootPart;
 
             if Conf.W then 
                 hrp.CFrame=CFrame.new(W_Pos)
@@ -105,8 +104,8 @@ task.spawn(function()
                 end;
                 if boss then 
                     Equip();
-                    -- เปลี่ยนจุดวาร์ปไปที่ "ด้านหลัง" ของบอสระยะ 10 หน่วย
-                    hrp.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 0, 10);
+                    -- วาร์ปไปข้างหลังบอส ระยะ 5
+                    hrp.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5);
                     hrp.CFrame = CFrame.lookAt(hrp.Position, boss.HumanoidRootPart.Position);
                     BringMob(boss);
                     if ch:FindFirstChildOfClass("Tool") then ch:FindFirstChildOfClass("Tool"):Activate() end 
@@ -117,8 +116,8 @@ task.spawn(function()
             elseif Conf.F and Conf.M~="" then 
                 for _,v in pairs(workspace:GetDescendants()) do 
                     if v.Name == Conf.M and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then 
-                        -- เปลี่ยนจุดวาร์ปไปที่ "ด้านหลัง" ของมอนสเตอร์ระยะ 10 หน่วย
-                        hrp.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 10);
+                        -- วาร์ปไปข้างหลังมอนสเตอร์ ระยะ 5
+                        hrp.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5);
                         hrp.CFrame = CFrame.lookAt(hrp.Position, v.HumanoidRootPart.Position);
                         Equip();
                         BringMob(v);
